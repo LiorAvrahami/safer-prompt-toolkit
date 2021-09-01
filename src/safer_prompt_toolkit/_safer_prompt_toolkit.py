@@ -4,10 +4,16 @@ from prompt_toolkit import completion,validation,document
 def prompt(message,max_failcase_completion_lines=3,max_chars_in_completion_line=150,**prompt_toolkit_kwargs):
     """
     :param message: the query message to write before waiting for input
-    :param max_failcase_completion_lines: in case the regular prompt toolkit fails, the completion the maximum amount of lines allowed
-    :param max_chars_in_completion_line:
-    :param prompt_toolkit_kwargs:
-    :return:
+    :param max_failcase_completion_lines: in case the regular prompt toolkit fails, max_failcase_completion_lines is the maximum amount of lines in the completion
+    :param max_chars_in_completion_line: in case the regular prompt toolkit fails, max_chars_in_completion_line is the maximum amount of chars in a line in the completion
+    :param prompt_toolkit_kwargs: any of prompt-toolkits keywords. in case the regular prompt toolkit fails, "validator" and "completer" are used if supplied.
+    :return: the users response to the prompt. (a string)
+
+    info: prompt_toolkit_kwargs allows you to enter some prompt_toolkit.validation.Validator instance, for example 'validator=prompt_toolkit.validation.DummyValidator()'.
+    prompt_toolkit_kwargs allows you to enter some prompt_toolkit.completion.Completer instance, for example 'completer=prompt_toolkit.completion.DummyCompleter()'
+
+    call_example:
+    prompt("some prompt message",validator=prompt_toolkit.validation.DummyValidator(),completer=prompt_toolkit.completion.DummyCompleter())
     """
     try:
         # try using prompt toolkit
