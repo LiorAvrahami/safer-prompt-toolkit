@@ -5,7 +5,9 @@ prompt-toolkit is a powerfull, command line UI, built in to almost every python 
 after making several projects that needed this functionality, and after deciding that copy pasting this prompt-toolkit fallback project is tedius and unhealthy, I desided to make this thing a project and upload it ot pypi.
 
 ## Installation
+```
 pip install safer-prompt-toolkit
+```
 
 ## Documentation
 after installing, you can import like so:
