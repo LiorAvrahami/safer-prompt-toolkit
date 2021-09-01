@@ -1,8 +1,13 @@
 # safer-prompt-toolkit
-a wrapper to prompt-toolkit, designed to provide a fallback for some of prompt-toolkit's functionality when operating from a place where prompt-toolkit can't run
+a wrapper to prompt-toolkit, designed to provide a fallback for some of prompt-toolkit's functionality when operating from a place where prompt-toolkit can't run.  
+## intent:  
+prompt-toolkit is a powerfull, command line UI, built in to almost every python interpreter. I love using it when asking the user for some input. However, prompt toolkit often complains and crashes when asked to ruin in certain non-terminal invorments (for example pycharms python console). and I find that this to be a major downside to using prompt toolkit as a minor UI part in some major project, that might somtimes be run in some context that is not the terminal.  
+after making several projects that needed this functionality, and after deciding that copy pasting this prompt-toolkit fallback project is tedius and unhealthy, I desided to make this thing a project and upload it ot pypi.
 
 ## Installation
+```
 pip install safer-prompt-toolkit
+```
 
 ## Documentation
 after installing, you can import like so:
