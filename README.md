@@ -18,10 +18,13 @@ safer_prompt_toolkit.prompt("some query with validation and completion options")
 #### safer_prompt_toolkit.prompt(message,max_failcase_completion_lines=3,max_chars_in_completion_line=150,**prompt_toolkit_kwargs)
 use prompt_toolkit's prompt function with a fail-safe  
 Parameters:  
-> - message - the prompt messege to be printed to the user, (add \n at the end if you want to get the response in a new line)  
+>  - message - the prompt messege to be printed to the user, (add \n at the end if you want to get the response in a new line)  
 >  - max_failcase_completion_lines - defaults to 3, in case the regular prompt toolkit fails, max_failcase_completion_lines is the maximum amount of lines in the completion  
 >  - max_chars_in_completion_line - defaults to 150, in case the regular prompt toolkit fails, max_chars_in_completion_line is the maximum amount of chars in a line in the completion  
 >  - \*\*prompt_toolkit_kwargs - any of prompt-toolkits keywords. in case the regular prompt toolkit fails, "validator" and "completer" are used if supplied.  
+
+returns:
+> - the users response  
 
 info: 
 > prompt_toolkit_kwargs allows you to enter some prompt_toolkit.validation.Validator instance. for example 'validator=prompt_toolkit.validation.Validator.DummyValidator()'.  
