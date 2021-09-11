@@ -1,5 +1,6 @@
 import prompt_toolkit
 from prompt_toolkit import completion,validation,document
+from prompt_toolkit.output.win32 import NoConsoleScreenBufferError
 
 def prompt(message,max_failcase_completion_lines=3,max_chars_in_completion_line=150,**prompt_toolkit_kwargs):
     """
@@ -18,7 +19,7 @@ def prompt(message,max_failcase_completion_lines=3,max_chars_in_completion_line=
     try:
         # try using prompt toolkit
         return prompt_toolkit.prompt(message,**prompt_toolkit_kwargs)
-    except:
+    except NoConsoleScreenBufferError:
         # if doesn't work than try using the simplest form of input possible
         return simplest_prompt(message, max_failcase_completion_lines=max_failcase_completion_lines, max_chars_in_completion_line=max_chars_in_completion_line, **prompt_toolkit_kwargs)
 
