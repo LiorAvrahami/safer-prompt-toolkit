@@ -42,11 +42,11 @@ def simplest_prompt(message,max_failcase_completion_lines=3,max_chars_in_complet
                 print(ve.message)
                 print("try again\n")
 
-        if user_answer[-1] == "*":
-            user_answer = user_answer[:-1]
-
-        # if invalid offer completions
+        # if invalid, offer completions
         if completer is not None:
+            # astrix "*" is meant to signal completions.
+            if len(user_answer) > 0 and user_answer[-1] == "*":
+                user_answer = user_answer[:-1]
             # get completions
             completions = completer.get_completions(document.Document(user_answer), completion.CompleteEvent())
             print_completions(user_answer, completions, max_failcase_completion_lines, max_chars_in_completion_line)
