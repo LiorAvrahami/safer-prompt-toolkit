@@ -58,7 +58,7 @@ def print_completions(user_answer,completions,max_failcase_completion_lines,max_
     except StopIteration:
         return
 
-    print("completion suggestions")
+    print("---completion suggestions---")
     # loop on the first few completions and print them compactly
     completion_lines_left = max_failcase_completion_lines
     cur_completion_line = user_answer + first_completion.text
@@ -82,4 +82,4 @@ def print_completions(user_answer,completions,max_failcase_completion_lines,max_
             cur_completion_line = next_possible_completion_line
     if completion_lines_left > 0:
         print(cur_completion_line)
-    print()
+    print("----------------------------")
