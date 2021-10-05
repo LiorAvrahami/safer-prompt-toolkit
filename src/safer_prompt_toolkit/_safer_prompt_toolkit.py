@@ -1,6 +1,9 @@
 import prompt_toolkit
-from prompt_toolkit import completion,validation,document
+from prompt_toolkit.document import Document
+from prompt_toolkit.completion import Completer,CompleteEvent
+from prompt_toolkit.validation import Validator,ValidationError
 from prompt_toolkit.output.win32 import NoConsoleScreenBufferError
+import itertools
 
 def prompt(message,max_failcase_completion_lines=3,max_chars_in_completion_line=150,**prompt_toolkit_kwargs):
     """
@@ -24,8 +27,8 @@ def prompt(message,max_failcase_completion_lines=3,max_chars_in_completion_line=
         return simplest_prompt(message, max_failcase_completion_lines=max_failcase_completion_lines, max_chars_in_completion_line=max_chars_in_completion_line, **prompt_toolkit_kwargs)
 
 def simplest_prompt(message,max_failcase_completion_lines=3,max_chars_in_completion_line=150,**prompt_toolkit_kwargs):
-    validator: validation.Validator = prompt_toolkit_kwargs["validator"] if "validator" in prompt_toolkit_kwargs else None
-    completer: completion.Completer = prompt_toolkit_kwargs["completer"] if "completer" in prompt_toolkit_kwargs else None
+    validator: Validator = prompt_toolkit_kwargs["validator"] if "validator" in prompt_toolkit_kwargs else None
+    completer: Completer = prompt_toolkit_kwargs["completer"] if "completer" in prompt_toolkit_kwargs else None
 
     while True:
         # prompt message and get answer
@@ -36,9 +39,9 @@ def simplest_prompt(message,max_failcase_completion_lines=3,max_chars_in_complet
             break
         else:
             try:
-                validator.validate(document.Document(user_answer))
+                validator.validate(Document(user_answer))
                 break
-            except validation.ValidationError as ve:
+            except ValidationError as ve:
                 print(ve.message)
                 print("try again\n")
 
@@ -48,11 +51,12 @@ def simplest_prompt(message,max_failcase_completion_lines=3,max_chars_in_complet
             if len(user_answer) > 0 and user_answer[-1] == "*":
                 user_answer = user_answer[:-1]
             # get completions
-            completions = completer.get_completions(document.Document(user_answer), completion.CompleteEvent())
-            print_completions(user_answer, completions, max_failcase_completion_lines, max_chars_in_completion_line)
+            synthetic_document = Document(user_answer, cursor_position=len(user_answer))
+            completions = completer.get_completions(synthetic_document, CompleteEvent())
+            print_completions(user_answer, completions, max_failcase_completion_lines, max_chars_in_completion_line,synthetic_document)
     return user_answer
 
-def print_completions(user_answer,completions,max_failcase_completion_lines,max_chars_in_completion_line):
+def print_completions(user_answer,completions,max_failcase_completion_lines,max_chars_in_completion_line,document):
     try:
         first_completion = next(completions)
     except StopIteration:
@@ -61,14 +65,16 @@ def print_completions(user_answer,completions,max_failcase_completion_lines,max_
     print("---completion suggestions---")
     # loop on the first few completions and print them compactly
     completion_lines_left = max_failcase_completion_lines
-    cur_completion_line = user_answer + first_completion.text
-    for c in completions:
+    cur_completion_line = render_completion(user_answer,document,first_completion)
+    for completion in completions:
         # print "max_failcase_completions_rows" number of possible completions rows
 
         if completion_lines_left == 0:
             print("...")
             break
-        text = user_answer + c.text  # text is the current completion text
+
+        # delete from [document.cursor_position + c.start_position] to [document.cursor_position] and put c.text in it's place (c.start_position is assumed to be negative as is in prompt-toolkit)
+        text = render_completion(user_answer,document,completion)# text is the current completion text
 
         # check if there is room in line for adding "text"
         next_possible_completion_line = cur_completion_line + " | " + text
@@ -83,3 +89,7 @@ def print_completions(user_answer,completions,max_failcase_completion_lines,max_
     if completion_lines_left > 0:
         print(cur_completion_line)
     print("----------------------------")
+
+
+def render_completion(user_answer,document,completion):
+    return user_answer[:document.cursor_position + completion.start_position] + completion.text + user_answer[document.cursor_position:]

@@ -4,14 +4,21 @@ from prompt_toolkit.validation import Validator,ValidationError
 from prompt_toolkit.completion import Completer, Completion, CompleteEvent
 
 
-def make_ConstantOptions_Completer_and_Validator(options, preferred_option=None, preferred_option_styles=["bg:ansibrightgreen fg:ansiblack","bg:ansigreen fg:ansiwhite"], b_complete_only_if_requested = False):
-        return ConstantOptionsCompleter(options,preferred_option,preferred_option_styles,b_complete_only_if_requested),\
-               ConstantOptionsValidator(options)
+def make_ConstantOptions_Completer_and_Validator(options, preferred_option=None,preferred_option_styles=("bg:ansibrightgreen fg:ansiblack", "bg:ansigreen fg:ansiwhite"),b_complete_only_if_requested=False):
+    d = make_ConstantOptions_Completer_and_Validator__return_kwargs(
+        options=options, preferred_option=preferred_option,preferred_option_styles=preferred_option_styles,b_complete_only_if_requested=b_complete_only_if_requested)
+    return d["completer"],d["validator"]
+
+
+def make_ConstantOptions_Completer_and_Validator__return_kwargs(options, preferred_option=None, preferred_option_styles=("bg:ansibrightgreen fg:ansiblack","bg:ansigreen fg:ansiwhite"), b_complete_only_if_requested = False):
+    options = list(options)
+    return {"completer":ConstantOptionsCompleter(options, preferred_option, preferred_option_styles, b_complete_only_if_requested),
+            "validator":ConstantOptionsValidator(options)}
 
 
 class ConstantOptionsCompleter(Completer):
     def __init__(self, options, preferred_option=None, preferred_option_styles=["bg:ansibrightgreen fg:ansiblack","bg:ansigreen fg:ansiwhite"], b_complete_only_if_requested = False):
-        self.options = options
+        self.options = list(options)
         self.b_complete_only_if_requested = b_complete_only_if_requested
         self.preferred_option = preferred_option
         self.preferred_option_styles = preferred_option_styles
@@ -28,7 +35,7 @@ class ConstantOptionsCompleter(Completer):
 
 class ConstantOptionsValidator(Validator):
     def __init__(self, options):
-        self.options = options
+        self.options = list(options)
 
     def validate(self, document: Document) -> None:
         if document.text not in self.options:
